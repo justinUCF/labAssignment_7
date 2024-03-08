@@ -21,23 +21,35 @@ of the swaps of each value listed above. Can you please think about the reason o
 #include <stdio.h>
 #define LEN 9
 
-void printArray(int arr[], int n){
-    int i;
-    for (i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-}
 void swap(int *xp, int *yp){
     int temp = *xp;
     *xp = *yp;
     *yp = temp;
 }
-int bubbleSort(int array[]){
+void increment(int freqarray[][2], int value){
+    for(int i = 0; i < LEN; i++){
+        if(freqarray[i][0] == value){
+            freqarray[i][1]++;
+            return;
+
+        }
+    }
+}
+void reset(int array[], int stati[], int freqarray[][2]){
+    for(int i =0; i < LEN; i++){
+        array[i] = stati[i];
+        freqarray[i][1] = 0;
+    }
+    return;
+}
+int bubbleSort(int array[], int freqarray[][2]){
     int totalSwap = 0;
     for(int i = 0; i < LEN; i++){
         for(int j = 0; j < LEN-i-1; j++){
             if(array[j] > array[j+1]){
                 swap(&(array[j]), &(array[j+1]));
+                increment(freqarray, array[j]);
+                increment(freqarray, array[j+1]);
                 totalSwap++;
             }
         }
@@ -45,39 +57,74 @@ int bubbleSort(int array[]){
     return totalSwap;
 }
 
-void selectionSort(int array[]){
-    int i, j, min_idx;
-    for(int i = 0; i < LEN-1; i++){
+int selectionSort(int array[], int n,int freqarray[][2]){
+    int i, j, min_idx, temp;
+    int totalSwap = 0;
+    for(int i = 0; i < n-1; i++){
         min_idx = i;
-        for(int j = i+1; j < LEN; j++){
+        for(int j = i+1; j < n; j++){
             if(array[j] < array[min_idx]){
                 min_idx = j;
             }
         }
-        swap(&(array[i]), &(array[min_idx]));
+        if(min_idx != i){
+            temp = array[i];
+            array[i] = array[min_idx];
+            array[min_idx] = temp;
+            increment(freqarray, array[i]);
+            increment(freqarray, array[min_idx]);
+            totalSwap++;
+        }
     }
+    return totalSwap;
 }
 
-void reset(int *array, int **freqarray){
-    
-}
 
 void main(){
     //Bubble Arrays
     int array1[9] = {97, 16, 45, 63, 13, 22, 7, 58, 72};
     int array2[9] = {90, 80, 70, 60, 50, 40, 30, 20, 10};
-    int freqArray1[9][2] = {{97, 0},{16, 0},{45, 0},{63, 0},{13,0},{22,0},{7,0},{58,0},{72,0}};
-    int freqArray2[9][2] = {{90, 0},{80, 0},{70, 0},{60, 0},{50,0},{40,0},{30,0},{20,0},{10,0}};
-    printf("%d\n",bubbleSort(array1));
-    printArray(array1, 9);
+    int static1[9] = {97, 16, 45, 63, 13, 22, 7, 58, 72};
+    int static2[9] = {90, 80, 70, 60, 50, 40, 30, 20, 10};
+    int freqArray1[9][2] = {{7, 0},{13, 0},{16, 0},{22, 0},{45,0},{58,0},{63,0},{72,0},{97,0}};
+    int freqArray2[9][2] = {{10, 0},{20, 0},{30, 0},{40, 0},{50,0},{60,0},{70,0},{80,0},{90,0}};
+    int totalSwap = 0;
+    //Print bubble sort data
+    printf("Bubble Sorts:\n");
+    //array 1
+    printf("Array1:\n");
+    totalSwap = bubbleSort(array1, freqArray1);
+    for(int i = 0; i < 9; i++){
+        printf("%d:\t%d\n", freqArray1[i][0], freqArray1[i][1]);
+    }
+    printf("%d\n", totalSwap);
+    //array 2
+    printf("Array2:\n");
+    totalSwap = bubbleSort(array2, freqArray2);
+    for(int i = 0; i < 9; i++){
+        printf("%d:\t%d\n", freqArray2[i][0], freqArray2[i][1]);
+    }
+    printf("%d\n", totalSwap);
 
-    // bubbleSort(array1);
-    // bubbleSort(array2);
-    // printArray(array1, 9);
-    // printArray(array2, 9);
-    // selectionSort(array1);
-    // selectionSort(array2);
-    // printArray(array1, 9);
-    // printArray(array2, 9);
+    //Reset both arrays to default
+    reset(array1, static1, freqArray1);
+    reset(array2, static2, freqArray2);
 
+    //Print selection sort data
+    printf("Selection Sorts:\n");
+    //array1
+    printf("Array1:\n");
+    totalSwap = selectionSort(array1, LEN, freqArray1);
+    for(int i = 0; i < 9; i++){
+        printf("%d:\t%d\n", freqArray1[i][0], freqArray1[i][1]);
+    }
+    printf("%d\n", totalSwap);
+    //array2
+    printf("Array2:\n");
+    totalSwap = selectionSort(array2, LEN, freqArray2);
+    for(int i = 0; i < 9; i++){
+        printf("%d:\t%d\n", freqArray2[i][0], freqArray2[i][1]);
+    }
+    printf("%d\n", totalSwap);
+    return;
 }
